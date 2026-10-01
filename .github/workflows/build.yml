@@ -13,6 +13,20 @@ jobs:
         with:
           gradle-version: 8.9
       - run: unzip -q LocalChatAI.zip
+      - name: Fix JVM target
+        run: |
+          cat >> LocalChatAI/app/build.gradle.kts <<'EOF'
+
+          android {
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+          }
+          EOF
       - run: gradle assembleDebug
         working-directory: LocalChatAI
       - uses: actions/upload-artifact@v4
