@@ -13,9 +13,14 @@ jobs:
         with:
           gradle-version: 8.9
       - run: unzip -q LocalChatAI.zip
+      - name: Fix Kotlin code
+        run: |
+          F=LocalChatAI/app/src/main/java/com/malek/localchatai/MainActivity.kt
+          sed -i 's/hintTextColor = getColor(R.color.muted);/setHintTextColor(getColor(R.color.muted));/' $F
+          sed -i 's/padding = android.graphics.Rect(dp(14), dp(2), dp(8), dp(2))/setPadding(dp(14), dp(2), dp(8), dp(2))/' $F
       - name: Fix JVM target
         run: |
-          cat >> LocalChatAI/app/build.gradle.kts <<'EOF'
+          cat >> LocalChatAI/app/build.gradle.kts <<'EOT'
 
           android {
               compileOptions {
@@ -26,7 +31,7 @@ jobs:
                   jvmTarget = "17"
               }
           }
-          EOF
+          EOT
       - run: gradle assembleDebug
         working-directory: LocalChatAI
       - uses: actions/upload-artifact@v4
